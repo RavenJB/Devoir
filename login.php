@@ -1,5 +1,4 @@
 <?php
-// filepath: /C:/COURS/BUT3/S1/SAE/Devoir/login.php
 require 'db.php'; // Inclure les fonctions utilitaires pour la base de données
 
 session_start();

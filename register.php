@@ -2,7 +2,6 @@
 require 'db.php'; // Inclure la connexion à la base de données
 
 $db = getDatabaseConnection();
-$users = [];
 
 // Récupérer la liste des enfants inscrits
 $stmt = $db->query("SELECT id, name FROM users WHERE role = 'enfant'");
@@ -97,15 +96,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <button type="submit">S'inscrire</button>
     </form>
-
-    <!-- Afficher la liste des utilisateurs si le rôle est "enseignant" ou "parent" -->
-    <?php if (!empty($users)) : ?>
-        <h2>Liste des membres inscrits :</h2>
-        <ul>
-            <?php foreach ($users as $user) : ?>
-                <li><strong><?= htmlspecialchars($user['name']) ?></strong> (<?= $user['role'] ?>) - <?= htmlspecialchars($user['email']) ?></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
 </body>
 </html>
