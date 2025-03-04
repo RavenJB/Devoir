@@ -12,7 +12,7 @@ $_SESSION['origine'] = "fin";
 $_SESSION['prenom'] = strtolower($_SESSION['prenom']);
 $_SESSION['prenom'] = supprime_caracteres_speciaux($_SESSION['prenom']);
 $today = date('Ymd-His'); // Format YYYYMMDD-HHMMSS
-$results_folder = './resultats/';
+$results_folder = '../resultats/';
 $filename = $results_folder . $_SESSION['prenom'] . '-' . $today . '.txt';
 
 // Ouvrir le fichier pour écrire

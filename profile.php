@@ -35,7 +35,7 @@ if ($user['role'] == 'parent' || $user['role'] == 'enseignant') {
 }
 
 // Lire les fichiers de résultats dans le dossier 'resultats/'
-$results_folder = './multiplication/resultats/';
+$results_folder = './mulpitplication/resultats/';
 $files = glob($results_folder . '*.txt');
 $results = [];
 
