@@ -10,7 +10,7 @@ function log_adresse_ip($cheminFichierLog, $nomPage) {
     $d="[".$jour." ".$heure."]";
     fwrite($fichierLog,$d." - ".$adresseIP." : ".$nomPage."\n");
     fclose($fichierLog);
-}
+} 
 ?>
 
 <?php

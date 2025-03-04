@@ -1,21 +1,24 @@
 <?php
-	@ob_start();
-    include 'utils.php';
+// filepath: /c:/COURS/BUT3/S1/SAE/Devoir/multiplication/question.php
+@ob_start();
+include 'utils.php';
+session_start();
 
+// Inclure et configurer Monolog
+$log = require __DIR__ . '/log_config.php';
 
-	session_start();
-	$_SESSION['origine']="question";
-    if($_SESSION['prenom']=="" && $_POST['prenom']==""){
-        log_adresse_ip("logs/log.txt","question.php - accès irrégulier");
-        unset($_SESSION);
-        unset($_POST);
-        header('Location: ./index.php');
-    }	
-	if($_SESSION['prenom']==""){
-		$_SESSION['prenom']=$_POST['prenom'];
-	}
-    $numQuestion=$_SESSION['nbQuestion']+1;
-    log_adresse_ip("logs/log.txt","question.php - ".$_SESSION['prenom']." - Question numéro ".$numQuestion);
+// Log l'adresse IP et la page
+$log->info('Accès à question.php', [
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'page' => 'question.php',
+    'user' => $_SESSION['prenom'],
+    'question_number' => $_SESSION['nbQuestion']
+]);
+
+if ($_SESSION['nbQuestion'] > $_SESSION['nbMaxQuestions']) {
+	header('Location: ./fin.php');
+}
+
 ?>
 
 <!doctype html>

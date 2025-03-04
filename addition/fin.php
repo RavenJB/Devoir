@@ -1,13 +1,46 @@
 <?php
-	@ob_start();
-    include 'utils.php';
-	session_start();
+@ob_start();
+include 'utils.php';
+session_start();
 
-    log_adresse_ip("logs/log.txt","fin.php - ".$_SESSION['prenom']);
+// Inclure et configurer Monolog
+$log = require __DIR__ . '/log_config.php';
 
-	$_SESSION['origine']="fin";
+// Log l'adresse IP et la page
+$log->info('Accès à fin.php', [
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'page' => 'fin.php',
+    'user' => $_SESSION['prenom']
+]);
+
+// Enregistrer l'origine
+$_SESSION['origine'] = "fin";
+
+// Sauvegarder les résultats dans le dossier resultats/
+$_SESSION['prenom'] = strtolower($_SESSION['prenom']);
+$_SESSION['prenom'] = supprime_caracteres_speciaux($_SESSION['prenom']);
+$today = date('Ymd-His'); // Format YYYYMMDD-HHMMSS
+$results_folder = '../resultats/';
+$filename = $results_folder . $_SESSION['prenom'] . '-' . $today . '.txt';
+
+// Ouvrir le fichier pour écrire
+$fp = fopen($filename, 'w');
+if ($fp) {
+    // Écrire les détails de l'examen (exemple : nb bonne réponse, questions, etc.)
+    $content = "Nom: " . $_SESSION['prenom'] . "\n";
+    $content .= "Nombre de bonnes réponses: " . $_SESSION['nbBonneReponse'] . "\n";
+    $content .= "Nombre total de questions: " . $_SESSION['nbQuestion'] . "\n";
+    $content .= "Historique des réponses: " . $_SESSION['historique'] . "\n";
+
+    fwrite($fp, $content); // Ecrire dans le fichier
+    fclose($fp); // Fermer le fichier
+} else {
+    $log->error('Erreur lors de l\'enregistrement des résultats', [
+        'filename' => $filename
+    ]);
+    echo "Erreur lors de l'enregistrement des résultats.";
+}
 ?>
-
 <!doctype html>
 <html lang="fr">
 	<head>

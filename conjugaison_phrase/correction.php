@@ -1,16 +1,25 @@
 <?php
-	@ob_start();
-    include 'utils.php';
-    session_start();
-    log_adresse_ip("logs/log.txt","correction.php - ".$_SESSION['prenom']." - Question numéro ".$_SESSION['nbQuestion']);
+@ob_start();
+include 'utils.php';
+session_start();
 
-	
-    if($_POST['correction']==""){
-        session_destroy();
-        session_unset();
-        unset($_POST);
-        header('Location: ./index.php');
-    }
+// Inclure et configurer Monolog
+$log = require __DIR__ . '/log_config.php';
+
+// Log l'adresse IP et la page
+$log->info('Accès à correction.php', [
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'page' => 'correction.php',
+    'user' => $_SESSION['prenom'],
+    'question_number' => $_SESSION['nbQuestion']
+]);
+
+if ($_POST['correction'] == "") {
+    session_destroy();
+    session_unset();
+    unset($_POST);
+    header('Location: ./index.php');
+}
 ?>
 
 <!doctype html>

@@ -3,7 +3,15 @@
 include 'utils.php';
 session_start();
 
-log_adresse_ip("logs/log.txt", "fin.php - " . $_SESSION['prenom']);
+// Inclure et configurer Monolog
+$log = require __DIR__ . '/log_config.php';
+
+// Log l'adresse IP et la page
+$log->info('Accès à fin.php', [
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'page' => 'fin.php',
+    'user' => $_SESSION['prenom']
+]);
 
 // Enregistrer l'origine
 $_SESSION['origine'] = "fin";
@@ -27,9 +35,11 @@ if ($fp) {
     fwrite($fp, $content); // Ecrire dans le fichier
     fclose($fp); // Fermer le fichier
 } else {
+    $log->error('Erreur lors de l\'enregistrement des résultats', [
+        'filename' => $filename
+    ]);
     echo "Erreur lors de l'enregistrement des résultats.";
 }
-
 ?>
 
 <!doctype html>
