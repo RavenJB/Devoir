@@ -12,12 +12,11 @@
 						<center>
 						
 							<?php
+								// Si le prénom n'est pas renseigné, demander à l'utilisateur de le saisir
 								if($_GET['prenomRes']==""){
-									include 'utils.php';
-									log_adresse_ip("logs/log.txt","affiche_resultat.php");
+									include 'utils.php'; // Inclure les fonctions utilitaires
+									log_adresse_ip("logs/log.txt","affiche_resultat.php"); // Log de l'accès
 							?>
-						
-						
 						
 							<h3>Quel est le prénom de l'enfant ?</h3><br />
 							<form action="./affiche_resultat.php" method="get">
@@ -25,27 +24,31 @@
 								<input type="submit" value="Afficher les résultats">
 							</form>
 						
-						
 							<?php
+								// Si le prénom est renseigné, afficher les résultats correspondants
 								}else{
-									include 'utils.php';
-									log_adresse_ip("logs/log.txt","affiche_resultat.php - ".$_GET['prenomRes']);
+									include 'utils.php'; // Inclure les fonctions utilitaires
+									log_adresse_ip("logs/log.txt","affiche_resultat.php - ".$_GET['prenomRes']); // Log avec le prénom renseigné
 									echo '<h1>Résultats de '.$_GET['prenomRes'].'</h1>';
 									$total=0;
-									$files=scandir('./resultats/');
-									$_GET['prenomRes']=strtolower($_GET['prenomRes']);
-                                    $_GET['prenomRes']=supprime_caracteres_speciaux($_GET['prenomRes']);
+									$files=scandir('./resultats/'); // Récupérer la liste des fichiers dans le répertoire 'resultats'
+									$_GET['prenomRes']=strtolower($_GET['prenomRes']); // Convertir le prénom en minuscules
+                                    $_GET['prenomRes']=supprime_caracteres_speciaux($_GET['prenomRes']); // Supprimer les caractères spéciaux du prénom
+									
+									// Parcourir les fichiers de résultats pour afficher ceux correspondant au prénom
 									foreach ($files as $fichier)
 										if(substr($fichier, 0, strlen($_GET['prenomRes']))==$_GET['prenomRes']){
+											// Afficher le lien vers le fichier de résultat
 											echo '<a href="./resultats/'.$fichier.'">'.$fichier.'</a> : ';
-											$fichierOuvert = file('./resultats/'.$fichier);
-											$der_ligne = $fichierOuvert[count($fichierOuvert)-1];
-											$total=$total+$der_ligne;
+											$fichierOuvert = file('./resultats/'.$fichier); // Ouvrir le fichier de résultat
+											$der_ligne = $fichierOuvert[count($fichierOuvert)-1]; // Dernière ligne du fichier (score)
+											$total=$total+$der_ligne; // Ajouter le score total
+											// Afficher le score et un lien pour supprimer le fichier de résultat
 											echo $der_ligne.' points - <a href="supprimer_resultat.php?prenomRes='.$_GET['prenomRes'].'&nomFichier='.$fichier.'">supprimer</a><br /><br />';
 										}
 										
+									// Afficher le total des points
 									echo '<hr><br />';
-										
 									if($total>1)
 										echo '<h2>TOTAL : '.$total.' POINTS</h2>';
 									else
@@ -53,9 +56,6 @@
 								}
 							?>
 							
-							
-															
-						
 						
 						
 						</center>
