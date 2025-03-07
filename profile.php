@@ -37,7 +37,7 @@ foreach ($files as $file) {
     $questions = array_slice($lines, 3); // Prend toutes les lignes après la 3e
 
     $results[] = [
-        'prenom' => $prenom ?: "Inconnu",
+        'prenom' => $prenom ?: "",
         'note' => "$nbBonneReponse/$nbQuestion",
         'date' => $date,
         'questions' => $questions
