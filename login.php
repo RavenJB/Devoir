@@ -34,6 +34,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title>Connexion</title>
 </head>
+<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="profile.php">Profil</a>
+                <a href="logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="index.php">Accueil</a>
+                <a href="register.php">S'inscrire</a>
+                <a href="login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 <body>
     <h1>Connexion</h1>
     <form method="post" action="login.php"> <!-- Le formulaire envoie une requête POST à la page login.php -->

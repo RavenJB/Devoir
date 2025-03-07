@@ -1,123 +1,123 @@
 <?php
-// Inclusion du fichier de connexion à la base de données
-require 'db.php'; // Inclure les fonctions utilitaires pour la base de données
-
-// Démarrer la session pour accéder aux informations de session de l'utilisateur
+// Inclusion du fichier de connexion
+require 'db.php';
 session_start();
 
-// Vérification si l'utilisateur est connecté. Si non, rediriger vers la page de connexion.
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php'); // Redirection vers la page de login
-    exit(); // Fin de l'exécution du script
+    header('Location: login.php');
+    exit();
 }
 
-// Récupération de l'ID utilisateur à partir de la session
 $user_id = $_SESSION['user_id'];
-
-// Connexion à la base de données
 $db = getDatabaseConnection();
 
-// Préparation de la requête pour récupérer les informations de l'utilisateur à partir de l'ID
+// Récupération des informations de l'utilisateur
 $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
-$user = $stmt->fetch(); // Exécution de la requête et récupération des résultats
+$user = $stmt->fetch();
 
-// Récupération des statistiques des exercices de l'utilisateur
-$stmt = $db->prepare("SELECT * FROM exercices WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$exercices = $stmt->fetchAll(); // Récupération de tous les résultats des exercices
-
-// Si l'utilisateur est un parent ou un enseignant, récupérer la liste des élèves associés
-if ($user['role'] == 'parent' || $user['role'] == 'enseignant') {
-    $stmt = $db->prepare("SELECT users.name, users.role FROM users 
-                          JOIN role ON (role.parent_id = ? OR role.teacher_id = ?) 
-                          WHERE role.child_id = users.id");
-    $stmt->execute([$user_id, $user_id]);
-    $students = $stmt->fetchAll(); // Récupération des élèves associés à ce parent ou enseignant
-} elseif ($user['role'] == 'enfant') {
-    // Si l'utilisateur est un enfant, récupérer les informations de ses parents et de son enseignant
-    $stmt = $db->prepare("SELECT users.name, users.role FROM users WHERE users.id = ? OR users.id = ?");
-    $stmt->execute([$user['parent_id'], $user['teacher_id']]);
-    $related_users = $stmt->fetchAll(); // Récupération des informations des parents et enseignants
-}
-
-// Lecture des fichiers de résultats dans le dossier 'resultats/' pour récupérer les résultats d'exercices
-$results_folder = './mulpitplication/resultats/';
-$files = glob($results_folder . '*.txt'); // Récupère tous les fichiers texte du dossier 'resultats/'
-$results = []; // Tableau pour stocker les résultats des exercices
+// Lecture des fichiers de résultats
+$results_folder = 'resultats/';
+$files = glob($results_folder . '*.txt');
+$results = [];
 
 foreach ($files as $file) {
-    // Lecture du contenu de chaque fichier de résultats
     $content = file_get_contents($file);
+    $lines = explode("\n", trim($content));
+
+    if (count($lines) < 3) continue;
+
+    $prenom = trim(str_replace("Nom: ", "", $lines[0]));
+    $nbBonneReponse = trim(str_replace("Nombre de bonnes réponses: ", "", $lines[1]));
+    $nbQuestion = trim(str_replace("Nombre total de questions: ", "", $lines[2]));
+
+    $date = date('Y-m-d H:i:s', filemtime($file));
     
-    // Extraction des données à partir du fichier texte (format prédéfini)
-    $lines = explode("\n", $content); // Divise le contenu en lignes
-    $prenom = trim(str_replace("Nom: ", "", $lines[0])); // Extrait le prénom de l'élève
-    $nbBonneReponse = trim(str_replace("Nombre de bonnes réponses: ", "", $lines[1])); // Nombre de bonnes réponses
-    $nbQuestion = trim(str_replace("Nombre total de questions: ", "", $lines[2])); // Nombre total de questions
-    $date = date('Y-m-d H:i:s', filemtime($file)); // Date de la dernière modification du fichier, utilisée comme la date du test
-    
-    // Ajout des résultats au tableau
+    // Extraction des réponses aux questions
+    $questions = array_slice($lines, 3); // Prend toutes les lignes après la 3e
+
     $results[] = [
-        'prenom' => $prenom,
-        'note' => $nbBonneReponse . '/' . $nbQuestion, // Affichage sous forme de "nbBonneReponse/nbQuestion"
-        'date' => $date, // Date du test
+        'prenom' => $prenom ?: "Inconnu",
+        'note' => "$nbBonneReponse/$nbQuestion",
+        'date' => $date,
+        'questions' => $questions
     ];
 }
 ?>
 
-<!-- Code HTML pour afficher les informations du profil de l'utilisateur -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profil</title> <!-- Titre de la page -->
+    <title>Profil</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        .details { display: none; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; margin-top: 10px; }
+        .btn { padding: 5px 10px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        .btn:hover { background-color: #0056b3; }
+    </style>
+    <script>
+        function toggleDetails(index) {
+            var details = document.getElementById("details-" + index);
+            if (details.style.display === "none") {
+                details.style.display = "block";
+            } else {
+                details.style.display = "none";
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>Profil de <?php echo htmlspecialchars($user['name']); ?></h1> <!-- Affiche le nom de l'utilisateur -->
-    <h2>Rôle : <?php echo htmlspecialchars($user['role']); ?></h2> <!-- Affiche le rôle de l'utilisateur -->
-    
-    <!-- Si l'utilisateur est un parent ou un enseignant, afficher la liste des élèves associés -->
-    <?php if ($user['role'] == 'parent' || $user['role'] == 'enseignant'): ?>
-        <h3>Liste des élèves</h3>
-        <ul>
-            <?php foreach ($students as $student): ?>
-                <li><?php echo htmlspecialchars($student['name']); ?></li> <!-- Affichage du nom de chaque élève -->
-            <?php endforeach; ?>
-        </ul>
-    <?php elseif ($user['role'] == 'enfant'): ?>
-        <!-- Si l'utilisateur est un enfant, afficher ses parents et enseignants -->
-        <h3>Parents et Professeurs</h3>
-        <ul>
-            <?php foreach ($related_users as $related_user): ?>
-                <li><?php echo htmlspecialchars($related_user['name']); ?> (<?php echo htmlspecialchars($related_user['role']); ?>)</li> <!-- Affichage du nom et rôle des parents et enseignants -->
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
 
-    <!-- Affichage des statistiques des exercices -->
-    <h2>Statistiques des exercices</h2>
-    <table border="1">
-        <thead>
+<h1>Profil de <?php echo htmlspecialchars($user['name']); ?></h1>
+<h2>Rôle : <?php echo htmlspecialchars($user['role']); ?></h2>
+
+<h2>Statistiques des exercices</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nom de l'élève</th>
+            <th>Note</th>
+            <th>Date</th>
+            <th>Résultats</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (empty($results)) : ?>
             <tr>
-                <th>Nom de la matière</th>
-                <th>Note</th>
-                <th>Date</th>
+                <td colspan="4">Aucun résultat disponible</td>
             </tr>
-        </thead>
-        <tbody>
-            <!-- Affichage des résultats extraits des fichiers -->
-            <?php foreach ($results as $result): ?>
+        <?php else : ?>
+            <?php foreach ($results as $index => $result): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($result['prenom']); ?></td> <!-- Nom de l'élève -->
-                    <td><?php echo htmlspecialchars($result['note']); ?></td> <!-- Note de l'exercice -->
-                    <td><?php echo htmlspecialchars($result['date']); ?></td> <!-- Date du test -->
+                    <td><?php echo htmlspecialchars($result['prenom']); ?></td>
+                    <td><?php echo htmlspecialchars($result['note']); ?></td>
+                    <td><?php echo htmlspecialchars($result['date']); ?></td>
+                    <td>
+                        <button class="btn" onclick="toggleDetails(<?php echo $index; ?>)">Voir détails</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div id="details-<?php echo $index; ?>" class="details">
+                            <h4>Questions et réponses :</h4>
+                            <ul>
+                                <?php foreach ($result['questions'] as $question): ?>
+                                    <li><?php echo htmlspecialchars($question); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </td>
                 </tr>
             <?php endforeach; ?>
-        </tbody>
-    </table>
+        <?php endif; ?>
+    </tbody>
+</table>
 
-    <!-- Liens pour se déconnecter et revenir à l'accueil -->
-    <a href="logout.php">Se déconnecter</a>
-    <a href="index.php">Revenir à l'accueil</a>
+<a href="logout.php">Se déconnecter</a>
+<a href="index.php">Revenir à l'accueil</a>
+
 </body>
 </html>

@@ -10,7 +10,7 @@ $log = require __DIR__ . '/log_config.php';
 $log->info('Accès à question.php', [
     'ip' => $_SERVER['REMOTE_ADDR'], // Adresse IP de l'utilisateur
     'page' => 'question.php', // Nom de la page
-    'user' => $_SESSION['prenom'], // Prénom de l'utilisateur stocké en session
+    'user' => $_SESSION['name'], // Prénom de l'utilisateur stocké en session
     'question_number' => $_SESSION['nbQuestion'] // Numéro de la question en cours
 ]);
 
@@ -27,6 +27,20 @@ if ($_SESSION['nbQuestion'] > $_SESSION['nbMaxQuestions']) {
 		<meta charset="utf-8"> <!-- Définition du jeu de caractères -->
 		<title>Question</title> <!-- Titre de la page affiché dans l'onglet -->
 	</head>
+	<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 	<body style="background-color:grey;"> <!-- Définition du fond de la page en gris -->
 		<?php 
             // Incrémente le compteur de questions à chaque affichage de cette page
@@ -36,7 +50,8 @@ if ($_SESSION['nbQuestion'] > $_SESSION['nbMaxQuestions']) {
 			$nbGauche = 0;
 			$nbDroite = 0;
 			$operation = 0;
-			$reponse = 0;
+			$reponse = 0; 
+
 
 			// Génération aléatoire des nombres pour l'addition
 			$nbGauche = mt_rand(1000, 10000); // Nombre de gauche (entre 1000 et 10000)

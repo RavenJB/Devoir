@@ -41,3 +41,6 @@
 [2025-03-04T08:33:58.964801+00:00] multiplication.INFO: Accès à question.php {"ip":"::1","page":"question.php","user":"","question_number":9} []
 [2025-03-04T08:33:59.759598+00:00] multiplication.INFO: Accès à correction.php {"ip":"::1","page":"correction.php","user":"","question_number":10} []
 [2025-03-04T08:34:00.171528+00:00] multiplication.INFO: Accès à fin.php {"ip":"::1","page":"fin.php","user":""} []
+[2025-03-07T07:51:27.847507+00:00] multiplication.INFO: Accès à question.php {"ip":"::1","page":"question.php","user":"","question_number":0} []
+[2025-03-07T07:51:29.007555+00:00] multiplication.INFO: Accès à fin.php {"ip":"::1","page":"fin.php","user":""} []
+[2025-03-07T07:51:29.876016+00:00] multiplication.INFO: Accès à question.php {"ip":"::1","page":"question.php","user":"","question_number":0} []

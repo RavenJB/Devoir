@@ -4,6 +4,20 @@
 		<meta charset="utf-8"> <!-- Définit l'encodage des caractères en UTF-8 -->
 		<title>Résultats</title> <!-- Définit le titre de la page affiché dans l'onglet du navigateur -->
 	</head>
+	<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 	<body style="background-color:grey;"> <!-- Définit la couleur de fond de la page en gris -->
 		<center> <!-- Centre le contenu de la page -->
 			<table border="0" cellpadding="0" cellspacing="0"> <!-- Crée un tableau sans bordure, sans espace intérieur et sans espace entre les cellules -->

@@ -3,6 +3,12 @@
 include 'utils.php'; // Inclusion du fichier utils.php qui contient des fonctions utilitaires
 session_start(); // Démarre la session PHP pour accéder aux variables de session
 
+// Vérifiez si le prénom est défini dans la session
+if (!isset($_SESSION['name'])) {
+    echo "Erreur : Prénom non défini dans la session.";
+    exit();
+}
+
 // Inclure et configurer Monolog pour la journalisation
 $log = require __DIR__ . '/log_config.php';
 
@@ -10,26 +16,22 @@ $log = require __DIR__ . '/log_config.php';
 $log->info('Accès à fin.php', [
     'ip' => $_SERVER['REMOTE_ADDR'], // Adresse IP de l'utilisateur
     'page' => 'fin.php', // Nom de la page visitée
-    'user' => $_SESSION['prenom'] // Prénom de l'utilisateur stocké en session
+    'user' => $_SESSION['name'] // Prénom de l'utilisateur stocké en session
 ]);
 
 // Définir l'origine de la session sur "fin" pour suivre le parcours utilisateur
 $_SESSION['origine'] = "fin";
 
-// Nettoyage et mise en forme du prénom de l'utilisateur pour éviter les caractères spéciaux et le rendre en minuscules
-$_SESSION['prenom'] = strtolower($_SESSION['prenom']);
-$_SESSION['prenom'] = supprime_caracteres_speciaux($_SESSION['prenom']);
-
 // Création du nom de fichier avec la date et l'heure pour stocker les résultats
 $today = date('Ymd-His'); // Format YYYYMMDD-HHMMSS pour l'unicité du fichier
 $results_folder = '../resultats/'; // Dossier de stockage des résultats
-$filename = $results_folder . $_SESSION['prenom'] . '-' . $today . '.txt'; // Chemin complet du fichier
+$filename = $results_folder . $_SESSION['name'] . '-' . $today . '.txt'; // Chemin complet du fichier
 
 // Ouvrir le fichier pour l'écriture des résultats
 $fp = fopen($filename, 'w');
 if ($fp) {
     // Création du contenu du fichier avec les détails du test
-    $content = "Nom: " . $_SESSION['prenom'] . "\n";
+    $content = "Nom: " . $_SESSION['name'] . "\n";
     $content .= "Nombre de bonnes réponses: " . $_SESSION['nbBonneReponse'] . "\n";
     $content .= "Nombre total de questions: " . $_SESSION['nbQuestion'] . "\n";
     $content .= "Historique des réponses: " . $_SESSION['historique'] . "\n";
@@ -50,6 +52,20 @@ if ($fp) {
     <meta charset="utf-8">
     <title>Fin de la série</title> <!-- Titre de la page -->
 </head>
+<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 <body style="background-color:grey;"> <!-- Fond de couleur grise -->
     <center>
         <table border="0" cellpadding="0" cellspacing="0">
@@ -64,10 +80,10 @@ if ($fp) {
                             echo '<h2>Fin du test.</h2>Tu as '.$_SESSION['nbBonneReponse'].' bonne réponse sur '.$_SESSION['nbQuestion'].' questions.';
                         
                         // Normalisation du prénom à nouveau et enregistrement du score final
-                        $_SESSION['prenom']=strtolower($_SESSION['prenom']);
-                        $_SESSION['prenom']=supprime_caracteres_speciaux($_SESSION['prenom']);
+                        $_SESSION['name']=strtolower($_SESSION['name']);
+                        $_SESSION['name']=supprime_caracteres_speciaux($_SESSION['name']);
                         $today = date('Ymd-His'); // Récupération de la date actuelle
-                        $fp = fopen('./resultats/'.$_SESSION['prenom'].'-'.$today.'.txt', 'w'); // Ouverture du fichier
+                        $fp = fopen('./resultats/'.$_SESSION['name'].'-'.$today.'.txt', 'w'); // Ouverture du fichier
                         $_SESSION['historique']=$_SESSION['historique'].''.$_SESSION['nbBonneReponse']; // Ajout du score final dans l'historique
                         fwrite($fp, $_SESSION['historique']); // Écriture dans le fichier
                         fclose($fp); // Fermeture du fichier

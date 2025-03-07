@@ -4,6 +4,20 @@
     <meta charset="utf-8">
     <title>Résultats</title>
 </head>
+<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 <body style="background-color:grey;">
     <center>
         <table border="0" cellpadding="0" cellspacing="0">

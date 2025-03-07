@@ -24,6 +24,20 @@
 		<meta charset="utf-8">
 		<title>Accueil</title>
 	</head>
+	<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 	<body style="background-color:grey;">
 		<?php 
 			// Initialisation des variables POST (elles ne seront pas utilisées directement ici, mais sont présentes pour la logique des formulaires)

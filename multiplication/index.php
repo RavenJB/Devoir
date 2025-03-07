@@ -26,6 +26,20 @@
         <meta charset="utf-8">  <!-- Définit l'encodage des caractères de la page -->
         <title>Accueil</title>  <!-- Le titre de la page qui sera affiché dans l'onglet du navigateur -->
     </head>
+    <header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
     <body style="background-color:grey;">  <!-- Définir un fond gris pour la page -->
         <?php 
             // Initialisation des variables $_POST pour stocker les informations soumises

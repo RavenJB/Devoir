@@ -31,6 +31,20 @@ if ($_POST['correction'] == "") {
     <meta charset="utf-8">  <!-- Définit l'encodage des caractères de la page -->
     <title>Correction</title>  <!-- Titre de la page affiché dans le navigateur -->
 </head>
+<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 <body style="background-color:grey;">  <!-- Définir le fond de la page -->
     <center>  <!-- Centre le contenu sur la page -->
         <table border="0" cellpadding="0" cellspacing="0">  <!-- Table pour organiser la mise en page -->

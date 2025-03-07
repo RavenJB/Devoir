@@ -16,6 +16,7 @@ session_start();
                 <a href="profile.php">Profil</a>
                 <a href="logout.php">Se déconnecter</a>
             <?php else : ?>
+                <a href="index.php">Accueil</a>
                 <a href="register.php">S'inscrire</a>
                 <a href="login.php">Se connecter</a>
             <?php endif; ?>

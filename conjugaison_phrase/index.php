@@ -19,6 +19,20 @@ $_SESSION['origine'] = "index"; // Enregistre l'origine de la session (page d'ac
 		<meta charset="utf-8"> <!-- Déclare que la page utilise l'encodage UTF-8 pour gérer correctement les caractères spéciaux -->
 		<title>Accueil</title> <!-- Titre de la page qui apparaît dans l'onglet du navigateur -->
 	</head>
+	<header>
+    <nav>
+        <center>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <a href="../profile.php">Profil</a>
+                <a href="../logout.php">Se déconnecter</a>
+            <?php else : ?>
+                <a href="../index.php">Accueil</a>
+                <a href="../register.php">S'inscrire</a>
+                <a href="../login.php">Se connecter</a>
+            <?php endif; ?>
+        </center>
+    </nav>
+</header>
 	<body style="background-color:grey;"> <!-- Définition du fond gris pour la page -->
 
 		<?php 
