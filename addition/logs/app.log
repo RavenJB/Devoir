@@ -212,3 +212,8 @@
 [2025-03-07T08:26:02.018533+00:00] addition.INFO: Accès à correction.php {"ip":"::1","page":"correction.php","user":"","question_number":10} []
 [2025-03-07T08:26:02.363635+00:00] addition.INFO: Accès à fin.php {"ip":"::1","page":"fin.php","user":""} []
 [2025-03-07T08:26:16.549316+00:00] addition.INFO: Accès à fin.php {"ip":"::1","page":"fin.php","user":""} []
+[2025-03-07T08:32:39.450522+00:00] addition.INFO: Accès à question.php {"ip":"::1","page":"question.php","user":"","question_number":0} []
+[2025-03-07T08:32:39.669755+00:00] addition.INFO: Accès à correction.php {"ip":"::1","page":"correction.php","user":"","question_number":1} []
+[2025-03-07T08:32:39.836833+00:00] addition.INFO: Accès à question.php {"ip":"::1","page":"question.php","user":"","question_number":1} []
+[2025-03-07T08:32:40.002236+00:00] addition.INFO: Accès à correction.php {"ip":"::1","page":"correction.php","user":"","question_number":2} []
+[2025-03-07T08:32:40.185022+00:00] addition.INFO: Accès à question.php {"ip":"::1","page":"question.php","user":"","question_number":2} []
